@@ -29,14 +29,21 @@ export const POST = async (request: Request) => {
       );
     }
 
-    const calculation = await appendCalculation({
-      systemId,
-      inputParameters: validatedParams,
-      result
-    });
+    let calculationId: string | null = null;
+    try {
+      const calculation = await appendCalculation({
+        systemId,
+        inputParameters: validatedParams,
+        result
+      });
+      calculationId = calculation.id;
+    } catch (storageError) {
+      // Local filesystem storage can fail in serverless/readonly deployments.
+      console.warn("Calculation persistence failed; returning result without storage.", storageError);
+    }
 
     return NextResponse.json({
-      id: calculation.id,
+      id: calculationId,
       systemId,
       result
     });
