@@ -5,8 +5,8 @@ import { randomUUID } from "crypto";
 export interface LocalCalculationRecord {
   id: string;
   systemId: string;
-  inputParameters: Record<string, unknown>;
-  result: Record<string, unknown>;
+  inputParameters: unknown;
+  result: unknown;
   createdAt: string;
 }
 
@@ -43,8 +43,8 @@ const writeAll = async (records: LocalCalculationRecord[]) => {
 
 export const appendCalculation = async (input: {
   systemId: string;
-  inputParameters: Record<string, unknown>;
-  result: Record<string, unknown>;
+  inputParameters: unknown;
+  result: unknown;
 }) => {
   const record: LocalCalculationRecord = {
     id: randomUUID(),
