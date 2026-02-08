@@ -1,4 +1,6 @@
-export const scoringSystems = [
+import type { ScoringSystemDefinition } from "@/lib/types/scoring";
+
+export const scoringSystems: ScoringSystemDefinition[] = [
   {
     id: "child_pugh",
     name: "Child-Pugh",
@@ -100,6 +102,70 @@ export const scoringSystems = [
     references: [
       "Child CG, Turcotte JG. Surgery and portal hypertension. In: The liver and portal hypertension. Edited by CG Child. Philadelphia: Saunders 1964:50-64.",
       "Pugh RN, Murray-Lyon IM, Dawson JL, Pietroni MC, Williams R. Transection of the oesophagus for bleeding oesophageal varices. Br J Surg 1973; 60:646-49."
+    ]
+  },
+  {
+    id: "meld",
+    name: "MELD",
+    fullName: "Model for End-Stage Liver Disease (MELD)",
+    category: "HEPATIC",
+    description:
+      "Predicts short-term mortality in advanced liver disease using bilirubin, INR, and creatinine.",
+    parameters: [
+      {
+        name: "bilirubin",
+        type: "NUMERIC",
+        unit: "mg/dL",
+        category: "BIOCHEMICAL",
+        normalRange: { min: 0.3, max: 1.2 }
+      },
+      {
+        name: "inr",
+        type: "NUMERIC",
+        unit: null,
+        category: "BIOCHEMICAL",
+        normalRange: { min: 0.9, max: 1.2 }
+      },
+      {
+        name: "creatinine",
+        type: "NUMERIC",
+        unit: "mg/dL",
+        category: "BIOCHEMICAL",
+        normalRange: { min: 0.7, max: 1.3 }
+      }
+    ],
+    calculation: {
+      type: "formula",
+      minScore: 6,
+      maxScore: 40,
+      formula:
+        "MELD = 3.78*ln(max(bilirubin,1)) + 11.2*ln(max(INR,1)) + 9.57*ln(max(creatinine,1)) + 6.43"
+    },
+    interpretation: {
+      "6-9": {
+        description: "Lower short-term mortality risk",
+        threeMonthMortality: "1.9%"
+      },
+      "10-19": {
+        description: "Moderate short-term mortality risk",
+        threeMonthMortality: "6.0%"
+      },
+      "20-29": {
+        description: "High short-term mortality risk",
+        threeMonthMortality: "19.6%"
+      },
+      "30-39": {
+        description: "Very high short-term mortality risk",
+        threeMonthMortality: "52.6%"
+      },
+      "40+": {
+        description: "Critical short-term mortality risk",
+        threeMonthMortality: "71.3%"
+      }
+    },
+    references: [
+      "Kamath PS, Wiesner RH, Malinchoc M, et al. A model to predict survival in patients with end-stage liver disease. Hepatology. 2001;33(2):464-470.",
+      "United Network for Organ Sharing (UNOS). MELD/PELD allocation policy."
     ]
   }
 ];

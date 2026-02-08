@@ -13,3 +13,9 @@ export const childPughSchema = z.object({
     z.literal(4)
   ])
 });
+
+export const meldSchema = z.object({
+  bilirubin: z.number().min(0.1).max(50),
+  inr: z.number().min(0.5).max(10),
+  creatinine: z.number().min(0.1).max(15)
+});

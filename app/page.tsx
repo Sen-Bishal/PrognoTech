@@ -12,7 +12,7 @@ export default function Home() {
         </h1>
         <p className="max-w-2xl text-base text-slate-600">
           A fast, bedside-friendly calculator for validated medical scoring systems.
-          Start with Child-Pugh and expand to additional models as they are added.
+          Includes Child-Pugh and MELD with parameter-based score detection.
         </p>
         <div>
           <Link
@@ -27,6 +27,9 @@ export default function Home() {
           <p className="mt-2">
             This tool is for clinical decision support only and is not a substitute for
             professional judgment or institutional protocols.
+          </p>
+          <p className="mt-2">
+            Developed by Bishal@Hobby
           </p>
         </div>
       </main>
