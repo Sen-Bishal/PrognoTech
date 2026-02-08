@@ -12,7 +12,8 @@ export default function Home() {
         </h1>
         <p className="max-w-2xl text-base text-slate-600">
           A fast, bedside-friendly calculator for validated medical scoring systems.
-          Includes Child-Pugh and MELD with parameter-based score detection.
+          Includes Child-Pugh, MELD, APACHE II, SOFA, Wells DVT/PE, and CHA2DS2-VASc with
+          parameter-based score detection.
         </p>
         <div>
           <Link

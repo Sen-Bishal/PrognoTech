@@ -1,4 +1,14 @@
 export { calculateChildPugh } from "./hepatic/child-pugh";
 export { calculateMeld } from "./hepatic/meld";
+export { calculateApacheII } from "./icu/apache-ii";
+export { calculateSofa } from "./icu/sofa";
+export { calculateWellsDvt } from "./vascular/wells-dvt";
+export { calculateWellsPe } from "./vascular/wells-pe";
+export { calculateCha2ds2Vasc } from "./cardiac/cha2ds2-vasc";
 export type { ChildPughParams, ChildPughResult } from "./hepatic/child-pugh";
 export type { MeldParams, MeldResult } from "./hepatic/meld";
+export type { ApacheIIParams, ApacheIIResult } from "./icu/apache-ii";
+export type { SofaParams, SofaResult } from "./icu/sofa";
+export type { WellsDvtParams, WellsDvtResult } from "./vascular/wells-dvt";
+export type { WellsPeParams, WellsPeResult } from "./vascular/wells-pe";
+export type { Cha2ds2VascParams, Cha2ds2VascResult } from "./cardiac/cha2ds2-vasc";

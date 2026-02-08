@@ -1,7 +1,23 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { calculateChildPugh, calculateMeld } from "@/lib/calculators";
-import { childPughSchema, meldSchema } from "@/lib/validators/parameter-schemas";
+import {
+  calculateApacheII,
+  calculateCha2ds2Vasc,
+  calculateChildPugh,
+  calculateMeld,
+  calculateSofa,
+  calculateWellsDvt,
+  calculateWellsPe
+} from "@/lib/calculators";
+import {
+  apacheIISchema,
+  cha2ds2VascSchema,
+  childPughSchema,
+  meldSchema,
+  sofaSchema,
+  wellsDvtSchema,
+  wellsPeSchema
+} from "@/lib/validators/parameter-schemas";
 import { appendCalculation } from "@/lib/db/local-store";
 import { scoringSystems } from "@/lib/db/seed-data";
 import {
@@ -98,6 +114,36 @@ export const POST = async (request: Request) => {
         const parsed = meldSchema.parse(parameters);
         validatedParams = parsed;
         result = calculateMeld(parsed);
+        break;
+      }
+      case "apache_ii": {
+        const parsed = apacheIISchema.parse(parameters);
+        validatedParams = parsed;
+        result = calculateApacheII(parsed);
+        break;
+      }
+      case "sofa": {
+        const parsed = sofaSchema.parse(parameters);
+        validatedParams = parsed;
+        result = calculateSofa(parsed);
+        break;
+      }
+      case "wells_dvt": {
+        const parsed = wellsDvtSchema.parse(parameters);
+        validatedParams = parsed;
+        result = calculateWellsDvt(parsed);
+        break;
+      }
+      case "wells_pe": {
+        const parsed = wellsPeSchema.parse(parameters);
+        validatedParams = parsed;
+        result = calculateWellsPe(parsed);
+        break;
+      }
+      case "cha2ds2_vasc": {
+        const parsed = cha2ds2VascSchema.parse(parameters);
+        validatedParams = parsed;
+        result = calculateCha2ds2Vasc(parsed);
         break;
       }
       default: {

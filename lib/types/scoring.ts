@@ -1,6 +1,8 @@
 export type Category =
   | "HEPATIC"
   | "CARDIAC"
+  | "VASCULAR"
+  | "CRITICAL_CARE"
   | "ONCOLOGY"
   | "TRAUMA"
   | "NEUROLOGICAL"

@@ -2,8 +2,24 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { scoringSystems } from "@/lib/db/seed-data";
-import type { ChildPughResult, MeldResult } from "@/lib/calculators";
-import { childPughSchema, meldSchema } from "@/lib/validators/parameter-schemas";
+import type {
+  ApacheIIResult,
+  Cha2ds2VascResult,
+  ChildPughResult,
+  MeldResult,
+  SofaResult,
+  WellsDvtResult,
+  WellsPeResult
+} from "@/lib/calculators";
+import {
+  apacheIISchema,
+  cha2ds2VascSchema,
+  childPughSchema,
+  meldSchema,
+  sofaSchema,
+  wellsDvtSchema,
+  wellsPeSchema
+} from "@/lib/validators/parameter-schemas";
 import {
   guessScoringSystemFromSearch,
   type ScoringSystemGuess
@@ -11,7 +27,14 @@ import {
 import type { ParameterDefinition, ScoringSystemDefinition } from "@/lib/types/scoring";
 
 type InputState = Record<string, string>;
-type CalculationResultView = ChildPughResult | MeldResult;
+type CalculationResultView =
+  | ChildPughResult
+  | MeldResult
+  | ApacheIIResult
+  | SofaResult
+  | WellsDvtResult
+  | WellsPeResult
+  | Cha2ds2VascResult;
 
 const cardShadow = "shadow-[0_16px_38px_-20px_rgba(15,23,42,0.55)]";
 const topShadow = "shadow-[0_28px_58px_-28px_rgba(15,23,42,0.68)]";
@@ -88,6 +111,184 @@ const testParameterSetsBySystemId: Record<
       label: "Load MELD High",
       values: buildTestState("meld", { bilirubin: "4", inr: "3", creatinine: "3" })
     }
+  ],
+  apache_ii: [
+    {
+      id: "apache-low",
+      label: "Load APACHE II Low",
+      values: buildTestState("apache_ii", {
+        temperatureC: "37",
+        meanArterialPressure: "85",
+        heartRate: "90",
+        respiratoryRate: "16",
+        fio2: "0.21",
+        pao2: "92",
+        aaGradient: "",
+        arterialPh: "7.4",
+        serumBicarbonate: "",
+        sodium: "140",
+        potassium: "4.2",
+        creatinine: "1",
+        acuteRenalFailure: "false",
+        hematocrit: "40",
+        whiteBloodCellCount: "8",
+        glasgowComaScale: "15",
+        age: "35",
+        chronicHealthState: "none"
+      })
+    },
+    {
+      id: "apache-high",
+      label: "Load APACHE II High",
+      values: buildTestState("apache_ii", {
+        temperatureC: "40",
+        meanArterialPressure: "45",
+        heartRate: "150",
+        respiratoryRate: "40",
+        fio2: "0.7",
+        pao2: "",
+        aaGradient: "420",
+        arterialPh: "7.2",
+        serumBicarbonate: "",
+        sodium: "160",
+        potassium: "6.5",
+        creatinine: "4",
+        acuteRenalFailure: "true",
+        hematocrit: "25",
+        whiteBloodCellCount: "22",
+        glasgowComaScale: "7",
+        age: "78",
+        chronicHealthState: "emergency_postop"
+      })
+    }
+  ],
+  sofa: [
+    {
+      id: "sofa-low",
+      label: "Load SOFA Low",
+      values: buildTestState("sofa", {
+        pao2fio2: "420",
+        onRespiratorySupport: "false",
+        platelets: "220",
+        bilirubin: "0.9",
+        meanArterialPressure: "80",
+        dopamine: "0",
+        dobutamine: "0",
+        epinephrine: "0",
+        norepinephrine: "0",
+        glasgowComaScale: "15",
+        creatinine: "0.9",
+        urineOutput: "1500"
+      })
+    },
+    {
+      id: "sofa-high",
+      label: "Load SOFA High",
+      values: buildTestState("sofa", {
+        pao2fio2: "90",
+        onRespiratorySupport: "true",
+        platelets: "15",
+        bilirubin: "13",
+        meanArterialPressure: "55",
+        dopamine: "18",
+        dobutamine: "0",
+        epinephrine: "0.2",
+        norepinephrine: "0.3",
+        glasgowComaScale: "5",
+        creatinine: "5.5",
+        urineOutput: "150"
+      })
+    }
+  ],
+  wells_dvt: [
+    {
+      id: "dvt-unlikely",
+      label: "Load DVT Unlikely",
+      values: buildTestState("wells_dvt", {
+        activeCancer: "false",
+        paralysisOrRecentImmobilization: "false",
+        recentlyBedriddenOrMajorSurgery: "false",
+        localizedTendernessAlongDeepVenousSystem: "true",
+        entireLegSwollen: "false",
+        calfSwellingAtLeast3cm: "false",
+        pittingEdemaConfinedToSymptomaticLeg: "false",
+        collateralSuperficialVeins: "false",
+        previousDvt: "false",
+        alternativeDiagnosisAsLikelyOrMoreLikely: "true"
+      })
+    },
+    {
+      id: "dvt-likely",
+      label: "Load DVT Likely",
+      values: buildTestState("wells_dvt", {
+        activeCancer: "true",
+        paralysisOrRecentImmobilization: "true",
+        recentlyBedriddenOrMajorSurgery: "false",
+        localizedTendernessAlongDeepVenousSystem: "true",
+        entireLegSwollen: "true",
+        calfSwellingAtLeast3cm: "true",
+        pittingEdemaConfinedToSymptomaticLeg: "true",
+        collateralSuperficialVeins: "false",
+        previousDvt: "true",
+        alternativeDiagnosisAsLikelyOrMoreLikely: "false"
+      })
+    }
+  ],
+  wells_pe: [
+    {
+      id: "pe-unlikely",
+      label: "Load PE Unlikely",
+      values: buildTestState("wells_pe", {
+        clinicalSignsOfDvt: "false",
+        peMostLikelyDiagnosis: "false",
+        heartRate: "88",
+        immobilizationOrRecentSurgery: "false",
+        previousDvtOrPe: "false",
+        hemoptysis: "false",
+        malignancy: "false"
+      })
+    },
+    {
+      id: "pe-likely",
+      label: "Load PE Likely",
+      values: buildTestState("wells_pe", {
+        clinicalSignsOfDvt: "true",
+        peMostLikelyDiagnosis: "true",
+        heartRate: "120",
+        immobilizationOrRecentSurgery: "true",
+        previousDvtOrPe: "true",
+        hemoptysis: "true",
+        malignancy: "true"
+      })
+    }
+  ],
+  cha2ds2_vasc: [
+    {
+      id: "cha2-low",
+      label: "Load CHA2DS2 Low",
+      values: buildTestState("cha2ds2_vasc", {
+        congestiveHeartFailureOrLeftVentricularDysfunction: "false",
+        hypertension: "false",
+        age: "42",
+        diabetesMellitus: "false",
+        priorStrokeTiaOrThromboembolism: "false",
+        vascularDisease: "false",
+        sex: "male"
+      })
+    },
+    {
+      id: "cha2-high",
+      label: "Load CHA2DS2 High",
+      values: buildTestState("cha2ds2_vasc", {
+        congestiveHeartFailureOrLeftVentricularDysfunction: "true",
+        hypertension: "true",
+        age: "78",
+        diabetesMellitus: "true",
+        priorStrokeTiaOrThromboembolism: "true",
+        vascularDisease: "true",
+        sex: "female"
+      })
+    }
   ]
 };
 
@@ -97,9 +298,24 @@ const validatePayloadBySystem = (systemId: string, payload: Record<string, unkno
       return childPughSchema.parse(payload);
     case "meld":
       return meldSchema.parse(payload);
+    case "apache_ii":
+      return apacheIISchema.parse(payload);
+    case "sofa":
+      return sofaSchema.parse(payload);
+    case "wells_dvt":
+      return wellsDvtSchema.parse(payload);
+    case "wells_pe":
+      return wellsPeSchema.parse(payload);
+    case "cha2ds2_vasc":
+      return cha2ds2VascSchema.parse(payload);
     default:
       return payload;
   }
+};
+
+const optionalNumericParamsBySystem: Record<string, Set<string>> = {
+  apache_ii: new Set(["pao2", "aaGradient", "arterialPh", "serumBicarbonate"]),
+  sofa: new Set(["urineOutput"])
 };
 
 const isChildPughResult = (value: CalculationResultView): value is ChildPughResult =>
@@ -107,6 +323,21 @@ const isChildPughResult = (value: CalculationResultView): value is ChildPughResu
 
 const isMeldResult = (value: CalculationResultView): value is MeldResult =>
   "threeMonthMortality" in value;
+
+const isApacheIIResult = (value: CalculationResultView): value is ApacheIIResult =>
+  "estimatedHospitalMortality" in value;
+
+const isSofaResult = (value: CalculationResultView): value is SofaResult =>
+  "riskBand" in value;
+
+const isWellsPeResult = (value: CalculationResultView): value is WellsPeResult =>
+  "estimatedPrevalence" in value;
+
+const isWellsDvtResult = (value: CalculationResultView): value is WellsDvtResult =>
+  "twoTierLikelihood" in value && !("estimatedPrevalence" in value);
+
+const isCha2ds2VascResult = (value: CalculationResultView): value is Cha2ds2VascResult =>
+  "riskCategory" in value && "recommendation" in value;
 
 const getInputDisplayValue = (param: ParameterDefinition, raw: string) => {
   if (!raw) return "--";
@@ -130,6 +361,24 @@ const classTone = (value?: "A" | "B" | "C") => {
   if (value === "B") return "bg-amber-100 text-amber-800";
   if (value === "C") return "bg-rose-100 text-rose-800";
   return "bg-slate-100 text-slate-700";
+};
+
+const getScoreBounds = (system: ScoringSystemDefinition) => {
+  const calculation = system.calculation as { minScore?: unknown; maxScore?: unknown };
+  if (
+    typeof calculation.minScore === "number" &&
+    Number.isFinite(calculation.minScore) &&
+    typeof calculation.maxScore === "number" &&
+    Number.isFinite(calculation.maxScore) &&
+    calculation.maxScore > calculation.minScore
+  ) {
+    return {
+      minScore: calculation.minScore,
+      maxScore: calculation.maxScore
+    };
+  }
+
+  return null;
 };
 
 export const ChildPughCalculator = () => {
@@ -193,12 +442,19 @@ export const ChildPughCalculator = () => {
 
   const buildPayload = () => {
     const payload: Record<string, unknown> = {};
+    const optionalNumericParameters = optionalNumericParamsBySystem[activeSystem.id];
 
     for (const param of activeSystem.parameters) {
       const raw = inputs[param.name];
       if (param.type === "NUMERIC") {
+        if (!raw) {
+          if (optionalNumericParameters?.has(param.name)) {
+            continue;
+          }
+          throw new Error(`Enter a valid value for ${param.name}.`);
+        }
         const num = Number(raw);
-        if (!raw || Number.isNaN(num)) throw new Error(`Enter a valid value for ${param.name}.`);
+        if (Number.isNaN(num)) throw new Error(`Enter a valid value for ${param.name}.`);
         payload[param.name] = num;
         continue;
       }
@@ -261,15 +517,123 @@ export const ChildPughCalculator = () => {
 
   const childPughResult = result && isChildPughResult(result) ? result : null;
   const meldResult = result && isMeldResult(result) ? result : null;
+  const apacheIIResult = result && isApacheIIResult(result) ? result : null;
+  const sofaResult = result && isSofaResult(result) ? result : null;
+  const wellsDvtResult = result && isWellsDvtResult(result) ? result : null;
+  const wellsPeResult = result && isWellsPeResult(result) ? result : null;
+  const cha2ds2VascResult = result && isCha2ds2VascResult(result) ? result : null;
+
   const perioperativeMortality = childPughResult
     ? getPerioperativeMortality(childPughResult.class)
     : "30%";
+
   const gaugePercent = useMemo(() => {
     if (!result) return 22;
-    if (childPughResult) return Math.max(0, Math.min(100, ((childPughResult.totalScore - 5) / 10) * 100));
-    if (meldResult) return Math.max(0, Math.min(100, ((meldResult.totalScore - 6) / 34) * 100));
-    return 0;
-  }, [childPughResult, meldResult, result]);
+    const bounds = getScoreBounds(activeSystem);
+    if (!bounds) return 0;
+    return Math.max(
+      0,
+      Math.min(
+        100,
+        ((result.totalScore - bounds.minScore) / (bounds.maxScore - bounds.minScore)) * 100
+      )
+    );
+  }, [activeSystem, result]);
+
+  const summaryCards = useMemo(() => {
+    if (!result) {
+      return [
+        { label: "Primary Metric", value: "--" },
+        { label: "Secondary Metric", value: "--" },
+        { label: "Tertiary Metric", value: "--" }
+      ];
+    }
+
+    if (childPughResult) {
+      return [
+        { label: "1-Year Survival", value: childPughResult.oneYearSurvival },
+        { label: "2-Year Survival", value: childPughResult.twoYearSurvival },
+        { label: "Perioperative Mortality", value: perioperativeMortality }
+      ];
+    }
+
+    if (meldResult) {
+      return [
+        { label: "3-Month Mortality", value: meldResult.threeMonthMortality },
+        { label: "MELD Score", value: meldResult.totalScore },
+        { label: "Creatinine Used", value: meldResult.breakdown.creatinineUsed }
+      ];
+    }
+
+    if (apacheIIResult) {
+      return [
+        { label: "Hospital Mortality", value: apacheIIResult.estimatedHospitalMortality },
+        { label: "Acute Physiology", value: apacheIIResult.breakdown.acutePhysiologyScore },
+        { label: "Chronic Health Pts", value: apacheIIResult.breakdown.chronicHealthPoints }
+      ];
+    }
+
+    if (sofaResult) {
+      return [
+        { label: "Risk Band", value: sofaResult.riskBand },
+        { label: "Respiratory", value: sofaResult.breakdown.respiratory },
+        { label: "Renal", value: sofaResult.breakdown.renal }
+      ];
+    }
+
+    if (wellsDvtResult) {
+      return [
+        { label: "Pretest Probability", value: wellsDvtResult.pretestProbability.toUpperCase() },
+        {
+          label: "Two-Tier",
+          value: wellsDvtResult.twoTierLikelihood === "dvt_likely" ? "DVT LIKELY" : "DVT UNLIKELY"
+        },
+        { label: "Positive Criteria", value: wellsDvtResult.breakdown.positiveCriteriaCount }
+      ];
+    }
+
+    if (wellsPeResult) {
+      return [
+        { label: "Pretest Probability", value: wellsPeResult.pretestProbability.toUpperCase() },
+        {
+          label: "Two-Tier",
+          value: wellsPeResult.twoTierLikelihood === "pe_likely" ? "PE LIKELY" : "PE UNLIKELY"
+        },
+        { label: "Estimated Prevalence", value: wellsPeResult.estimatedPrevalence }
+      ];
+    }
+
+    if (cha2ds2VascResult) {
+      return [
+        { label: "Risk Category", value: cha2ds2VascResult.riskCategory.toUpperCase() },
+        { label: "Non-sex Score", value: cha2ds2VascResult.breakdown.nonSexScore },
+        { label: "Sex Category Pt", value: cha2ds2VascResult.breakdown.sexCategory }
+      ];
+    }
+
+    return [
+      { label: "Primary Metric", value: "--" },
+      { label: "Secondary Metric", value: "--" },
+      { label: "Tertiary Metric", value: "--" }
+    ];
+  }, [
+    apacheIIResult,
+    cha2ds2VascResult,
+    childPughResult,
+    meldResult,
+    perioperativeMortality,
+    result,
+    sofaResult,
+    wellsDvtResult,
+    wellsPeResult
+  ]);
+
+  const summaryValueClass = (value: string | number) => {
+    const text = String(value);
+    if (text.length <= 8) return "text-4xl";
+    if (text.length <= 20) return "text-2xl";
+    return "text-sm leading-5";
+  };
 
   const gaugeColor = gaugePercent > 70 ? "#ef4444" : gaugePercent > 45 ? "#f59e0b" : "#2563eb";
   const gaugeDegrees = Math.round((gaugePercent / 100) * 360);
@@ -308,11 +672,41 @@ export const ChildPughCalculator = () => {
           "Escalate to transplant center with high-risk values.",
           "Prioritize infection prevention and renal protection."
         ]
-      : [
-          "Enter full parameter set and run the calculation.",
-          "Use search terms to auto-switch score systems.",
-          "Interpret outputs with clinical context."
-        ];
+      : apacheIIResult
+        ? [
+            "Reassess APACHE II with evolving physiology and interventions.",
+            "Use score trends to support level-of-care and monitoring decisions.",
+            "Interpret mortality estimate with diagnosis-specific context."
+          ]
+        : sofaResult
+          ? [
+              "Track daily SOFA trajectory to detect response or deterioration.",
+              "Escalate support for worsening organ-system subscores.",
+              "Use SOFA changes with source control and infection trends."
+            ]
+          : wellsDvtResult
+            ? [
+                "Use D-dimer and compression ultrasound based on pretest probability.",
+                "Do not diagnose or exclude DVT from Wells score alone.",
+                "Reassess promptly if symptoms progress."
+              ]
+            : wellsPeResult
+              ? [
+                  "Integrate Wells PE with D-dimer and imaging pathways.",
+                  "Escalate immediately for hemodynamic instability.",
+                  "Reassess probability if new PE signs appear."
+                ]
+              : cha2ds2VascResult
+                ? [
+                    cha2ds2VascResult.recommendation,
+                    "Pair stroke-risk scoring with bleeding-risk assessment.",
+                    "Recalculate when major risk factors change."
+                  ]
+                : [
+                    "Enter full parameter set and run the calculation.",
+                    "Use search terms to auto-switch score systems.",
+                    "Interpret outputs with clinical context."
+                  ];
 
   const activePresets = testParameterSetsBySystemId[activeSystem.id] ?? [];
   const comparisonSystems = scoringSystems.filter((item) => item.id !== activeSystem.id);
@@ -520,30 +914,16 @@ export const ChildPughCalculator = () => {
           </article>
 
           <div className="order-2 grid gap-4 md:grid-cols-3 xl:order-1">
-            <article className={`rounded-2xl border border-slate-200 bg-white p-4 ${cardShadow}`}>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                {childPughResult ? "1-Year Survival" : "3-Month Mortality"}
-              </p>
-              <p className="mt-2 text-4xl font-black text-slate-900">
-                {childPughResult ? childPughResult.oneYearSurvival : meldResult ? meldResult.threeMonthMortality : "--"}
-              </p>
-            </article>
-            <article className={`rounded-2xl border border-slate-200 bg-white p-4 ${cardShadow}`}>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                {childPughResult ? "2-Year Survival" : "MELD Score"}
-              </p>
-              <p className="mt-2 text-4xl font-black text-slate-900">
-                {childPughResult ? childPughResult.twoYearSurvival : meldResult ? meldResult.totalScore : "--"}
-              </p>
-            </article>
-            <article className={`rounded-2xl border border-slate-200 bg-white p-4 ${cardShadow}`}>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                {childPughResult ? "Perioperative Mortality" : "Creatinine Used"}
-              </p>
-              <p className="mt-2 text-4xl font-black text-slate-900">
-                {childPughResult ? perioperativeMortality : meldResult ? meldResult.breakdown.creatinineUsed : "--"}
-              </p>
-            </article>
+            {summaryCards.map((card) => (
+              <article key={card.label} className={`rounded-2xl border border-slate-200 bg-white p-4 ${cardShadow}`}>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {card.label}
+                </p>
+                <p className={`mt-2 font-black text-slate-900 ${summaryValueClass(card.value)}`}>
+                  {card.value}
+                </p>
+              </article>
+            ))}
           </div>
 
           <article className={`order-3 rounded-2xl border border-slate-200 bg-white p-5 ${cardShadow} xl:order-2`}>

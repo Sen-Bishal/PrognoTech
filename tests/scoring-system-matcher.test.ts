@@ -38,6 +38,35 @@ test("guessScoringSystemFromSearch detects MELD by creatinine-driven query", () 
   assert.ok(guess.confidence >= 0.8);
 });
 
+test("guessScoringSystemFromSearch detects SOFA from ICU organ-failure terms", () => {
+  const guess = guessScoringSystemFromSearch("pao2fio2, norepinephrine, platelets");
+
+  assert.ok(guess);
+  assert.equal(guess.system.id, "sofa");
+});
+
+test("guessScoringSystemFromSearch detects Wells PE from clot-specific terms", () => {
+  const guess = guessScoringSystemFromSearch("hemoptysis, peMostLikelyDiagnosis, previousDvtOrPe");
+
+  assert.ok(guess);
+  assert.equal(guess.system.id, "wells_pe");
+});
+
+test("guessScoringSystemFromParameterKeys detects CHA2DS2-VASc from AF stroke-risk payload keys", () => {
+  const guess = guessScoringSystemFromParameterKeys({
+    congestiveHeartFailureOrLeftVentricularDysfunction: false,
+    hypertension: true,
+    age: 70,
+    diabetesMellitus: false,
+    priorStrokeTiaOrThromboembolism: false,
+    vascularDisease: true,
+    sex: "male"
+  });
+
+  assert.ok(guess);
+  assert.equal(guess.system.id, "cha2ds2_vasc");
+});
+
 test("rankScoringSystemsFromSearch returns empty when no parameters match", () => {
   const ranked = rankScoringSystemsFromSearch("troponin, st elevation, killip");
   assert.equal(ranked.length, 0);
